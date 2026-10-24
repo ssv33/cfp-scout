@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Earned Event Speaker Opportunity Scout</title>
+<style>
+  :root {
+    --ink: #1f2430;
+    --muted: #6b7280;
+    --line: #e3e6ec;
+    --bg: #f7f8fa;
+    --card: #ffffff;
+    --accent: #2f5aa8;
+    --accent-soft: #e8eefb;
+    --danger: #b3382f;
+    --warn: #a86a12;
+    --ok: #2e7d4f;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.5;
+  }
+  header {
+    background: var(--card);
+    border-bottom: 1px solid var(--line);
+    padding: 20px 24px;
+  }
+  header h1 { margin: 0 0 4px; font-size: 1.35rem; }
+  header p { margin: 0; color: var(--muted); font-size: 0.92rem; }
+  main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 80px; }
+  section {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+  section > h2 { margin: 0 0 4px; font-size: 1.08rem; }
+  .hint { color: var(--muted); font-size: 0.85rem; margin: 0 0 14px; }
+  label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px; }
+  input[type="text"], input[type="url"], input[type="date"], textarea, select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font: inherit;
+    font-size: 0.9rem;
+    background: #fff;
+    color: var(--ink);
+  }
+  textarea { resize: vertical; min-height: 60px; }
+  .field { margin-bottom: 14px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 720px) { .grid-2 { grid-template-columns: 1fr; } }
+  button {
+    font: inherit;
+    font-size: 0.88rem;
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  button:hover { background: var(--bg); }
+  button.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  button.primary:hover { background: #264a8c; }
+  button.danger-link {
+    border: none;
+    background: none;
+    color: var(--danger);
+    padding: 4px 6px;
+  }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  #briefOut {
+    display: none;
+    margin-top: 16px;
+  }
+  #briefText {
+    width: 100%;
+    min-height: 320px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.8rem;
+    white-space: pre;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); cursor: pointer; white-space: nowrap; }
+  th .arrow { font-size: 0.7rem; }
+  tr:hover td { background: #fafbfd; }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .badge.overdue { background: #fbe4e2; color: var(--danger); }
+  .badge.soon { background: #fdf0dc; color: var(--warn); }
+  .badge.future { background: #e5f2ea; color: var(--ok); }
+  .badge.none { background: var(--bg); color: var(--muted); }
+  .fit-High { color: var(--ok); font-weight: 600; }
+  .fit-Medium { color: var(--warn); font-weight: 600; }
+  .fit-Low { color: var(--muted); }
+  .status-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    background: var(--accent-soft);
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .status-Submitted { background: #fdf0dc; color: var(--warn); }
+  .status-Accepted { background: #e5f2ea; color: var(--ok); }
+  .status-Rejected, .status-Closed { background: var(--bg); color: var(--muted); }
+  .table-wrap { overflow-x: auto; }
+  .empty-state { color: var(--muted); font-size: 0.9rem; padding: 18px 4px; }
+  .row-actions { white-space: nowrap; }
+  .row-actions button { padding: 3px 8px; font-size: 0.78rem; }
+  #addForm {
+    border-top: 1px dashed var(--line);
+    margin-top: 16px;
+    padding-top: 16px;
+  }
+  #addForm h3 { margin: 0 0 10px; font-size: 0.95rem; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  @media (max-width: 720px) { .grid-3 { grid-template-columns: 1fr; } }
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.8rem;
+    padding: 20px;
+  }
+  a { color: var(--accent); }
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+    z-index: 50;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Earned Event Speaker Opportunity Scout</h1>
+  <p>Build a reusable CFP research brief for any B2B tech company, then track call-for-paper opportunities. Everything stays in your browser; no account, API key, or backend.</p>
+</header>
+
+<main>
+
+  <!-- ============ 1. COMPANY PROFILE ============ -->
+  <section id="profileSection">
+    <h2>1. Company profile</h2>
+    <p class="hint">Describe the company and the speaking program. This drives the research brief. Saved automatically in your browser.</p>
+
+    <div class="grid-2">
+      <div class="field">
+        <label for="companyName">Company name</label>
+        <input type="text" id="companyName" placeholder="e.g. Brightfork Labs">
+      </div>
+      <div class="field">
+        <label for="geography">Desired event geography</label>
+        <input type="text" id="geography" placeholder="e.g. US only; open to Canada for tier-1 events">
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="expertise">Company expertise / domain</label>
+      <textarea id="expertise" placeholder="What the company is credibly expert in. e.g. real-time data quality monitoring for streaming pipelines; anomaly detection; open-source lineage tooling"></textarea>
+    </div>
+
+    <div class="field">
+      <label for="audience">Target audience</label>
+      <textarea id="audience" placeholder="Personas, users vs. decision makers, account types and size. e.g. data platform engineers and heads of data (users and buyers); mid-market to enterprise accounts, 500+ employees; data-intensive industries"></textarea>
+    </div>
+
+    <div class="field">
+      <label for="speakers">Expert speaker bios</label>
+      <textarea id="speakers" placeholder="Who can speak and what makes them credible. One speaker per line. e.g. Jordan Lee, CTO and co-founder, created the open-source project X, previously staff engineer at a large cloud provider"></textarea>
+    </div>
+
+    <div class="field">
+      <label for="exclusions">Exclusions</label>
+      <textarea id="exclusions" placeholder="What to rule out. e.g. pay-to-play speaking slots, vendor-sponsored keynotes, events under 300 attendees, webinars, competitor-run conferences"></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="primary" id="btnGenerate">Generate research brief</button>
+      <button id="btnLoadSample">Load sample (fictional company)</button>
+      <button id="btnClearProfile">Clear profile</button>
+    </div>
+
+    <div id="briefOut">
+      <p class="hint" style="margin-top:0">Paste this brief into any AI assistant with web search (or hand it to a researcher). It asks for results in a format you can import straight back into the tracker below.</p>
+      <textarea id="briefText" readonly></textarea>
+      <div class="btn-row">
+        <button class="primary" id="btnCopyBrief">Copy brief</button>
+        <button id="btnDownloadBrief">Download .md</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2. CFP TRACKER ============ -->
+  <section id="trackerSection">
+    <h2>2. CFP opportunity tracker</h2>
+    <p class="hint">Track call-for-paper opportunities, deadlines, fit, source links, and submission status. Click a column header to sort. Rows are saved in your browser.</p>
+
+    <div class="btn-row" style="margin-bottom:14px">
+      <button class="primary" id="btnExportCsv">Export CSV</button>
+      <button id="btnImportCsv">Import CSV</button>
+      <input type="file" id="csvFile" accept=".csv,text/csv" style="display:none">
+      <button id="btnClearTracker">Clear all rows</button>
+    </div>
+
+    <div class="table-wrap">
+      <table id="trackerTable">
+        <thead>
+          <tr>
+            <th data-key="event">Event <span class="arrow"></span></th>
+            <th data-key="dateLocation">Event date &amp; location <span class="arrow"></span></th>
+            <th data-key="deadline">CFP deadline <span class="arrow"></span></th>
+            <th data-key="fit">Fit <span class="arrow"></span></th>
+            <th data-key="source">Source</th>
+            <th data-key="status">Status <span class="arrow"></span></th>
+            <th>Notes</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="trackerBody"></tbody>
+      </table>
+      <div id="emptyState" class="empty-state">No opportunities yet. Add one below, import a CSV, or load the sample.</div>
+    </div>
+
+    <form id="addForm">
+      <h3 id="addFormTitle">Add opportunity</h3>
+      <div class="grid-3">
+        <div class="field">
+          <label for="fEvent">Event name</label>
+          <input type="text" id="fEvent" required placeholder="Conference name">
+        </div>
+        <div class="field">
+          <label for="fDateLocation">Event date &amp; location</label>
+          <input type="text" id="fDateLocation" placeholder="e.g. May 12-13, Boston">
+        </div>
+        <div class="field">
+          <label for="fDeadline">CFP deadline</label>
+          <input type="date" id="fDeadline">
+        </div>
+        <div class="field">
+          <label for="fFit">Fit</label>
+          <select id="fFit">
+            <option>High</option>
+            <option selected>Medium</option>
+            <option>Low</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="fSource">Source link (CFP page)</label>
+          <input type="url" id="fSource" placeholder="https://...">
+        </div>
+        <div class="field">
+          <label for="fStatus">Submission status</label>
+          <select id="fStatus">
+            <option selected>Watching</option>
+            <option>Drafting</option>
+            <option>Submitted</option>
+            <option>Accepted</option>
+            <option>Rejected</option>
+            <option>Closed</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label for="fNotes">Notes</label>
+        <input type="text" id="fNotes" placeholder="Angle, suggested speaker, submission requirements...">
+      </div>
+      <div class="btn-row">
+        <button type="submit" class="primary" id="btnSaveRow">Add row</button>
+        <button type="button" id="btnCancelEdit" style="display:none">Cancel edit</button>
+      </div>
+    </form>
+  </section>
+
+</main>
+
+<footer>
+  Open source under the MIT license. Data lives only in this browser (localStorage). Export CSV to back up or share.
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  var LS_PROFILE = "scout.profile.v1";
+  var LS_ROWS = "scout.rows.v1";
+
+  var profileFields = ["companyName", "expertise", "audience", "geography", "speakers", "exclusions"];
+  var rows = [];
+  var editingId = null;
+  var sortKey = "deadline";
+  var sortAsc = true;
+
+  // ---------- helpers ----------
+  function $(id) { return document.getElementById(id); }
+
+  function toast(msg) {
+    var t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._timer);
+    t._timer = setTimeout(function () { t.classList.remove("show"); }, 2200);
+  }
+
+  function uid() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  }
+
+  function escHtml(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function todayISO() {
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+
+  // ---------- profile ----------
+  function saveProfile() {
+    var p = {};
+    profileFields.forEach(function (f) { p[f] = $(f).value; });
+    localStorage.setItem(LS_PROFILE, JSON.stringify(p));
+  }
+
+  function loadProfile() {
+    try {
+      var p = JSON.parse(localStorage.getItem(LS_PROFILE) || "{}");
+      profileFields.forEach(function (f) { if (p[f]) $(f).value = p[f]; });
+    } catch (e) { /* ignore corrupt data */ }
+  }
+
+  profileFields.forEach(function (f) {
+    $(f).addEventListener("input", saveProfile);
+  });
+
+  $("btnClearProfile").addEventListener("click", function () {
+    if (!confirm("Clear all profile fields?")) return;
+    profileFields.forEach(function (f) { $(f).value = ""; });
+    saveProfile();
+    $("briefOut").style.display = "none";
+  });
+
+  // ---------- sample data (fictional) ----------
+  $("btnLoadSample").addEventListener("click", function () {
+    $("companyName").value = "Brightfork Labs (fictional example)";
+    $("expertise").value = "Real-time data quality monitoring for streaming pipelines; open-source anomaly detection library (brightfork-oss); data contract enforcement; observability for event-driven architectures.";
+    $("audience").value = "Primary: data platform engineers and streaming infrastructure engineers (hands-on users). Secondary: heads of data platform and VPs of engineering (decision makers). Accounts: mid-market to enterprise, 500+ employees, data-intensive industries such as fintech, logistics, and e-commerce.";
+    $("geography").value = "United States only. Open to one or two tier-1 events in Canada or Western Europe if the audience fit is exceptional.";
+    $("speakers").value = "Priya Raman, CTO and co-founder: created brightfork-oss, previously staff engineer on a large-scale streaming platform; speaks best on architecture and systems design.\nMarcus Webb, Head of Developer Relations: former data engineer, strong live-demo presenter; speaks best on practitioner workflows and hands-on sessions.";
+    $("exclusions").value = "No pay-to-play speaking slots or sponsorship-required sessions. No webinars or virtual-only events. No events under roughly 300 attendees. Exclude conferences run by direct competitors.";
+    saveProfile();
+    if (rows.length === 0) {
+      rows = sampleRows();
+      saveRows();
+      renderTable();
+    }
+    toast("Sample loaded. Edit anything, or clear and start fresh.");
+  });
+
+  function sampleRows() {
+    return [
+      { id: uid(), event: "Streaming Data Forum 2027 (fictional)", dateLocation: "Apr 14-16, Chicago", deadline: "2026-12-05", fit: "High", source: "https://example.com/sdf-cfp", status: "Drafting", notes: "Practitioner audience. Angle: data contracts in event-driven systems. Speaker: Priya." },
+      { id: uid(), event: "Enterprise Data Quality Summit (fictional)", dateLocation: "May 20-21, Austin", deadline: "2027-01-15", fit: "High", source: "https://example.com/edqs-cfp", status: "Watching", notes: "Decision-maker heavy. Co-present with a customer if possible." },
+      { id: uid(), event: "OpenSource Infra Con (fictional)", dateLocation: "Mar 3-5, Denver", deadline: "2026-11-20", fit: "Medium", source: "https://example.com/osic-cfp", status: "Submitted", notes: "OSS-first crowd. Submitted brightfork-oss architecture talk on 10/30." }
+    ];
+  }
+
+  // ---------- research brief ----------
+  function buildBrief() {
+    var p = {};
+    profileFields.forEach(function (f) { p[f] = $(f).value.trim(); });
+    var name = p.companyName || "the company";
+
+    var lines = [];
+    lines.push("# Earned Speaking Opportunity Research Brief: " + name);
+    lines.push("");
+    lines.push("_Generated " + todayISO() + ". Reusable: re-run this brief monthly or quarterly to refresh results._");
+    lines.push("");
+    lines.push("## Your role");
+    lines.push("You are an events researcher building a pipeline of EARNED (non-paid) speaking opportunities for " + name + ". Earned means accepted through a call for papers / call for speakers on merit, not purchased through sponsorship.");
+    lines.push("");
+    lines.push("## Company expertise and domain");
+    lines.push(p.expertise || "(not provided)");
+    lines.push("");
+    lines.push("## Target audience to reach");
+    lines.push(p.audience || "(not provided)");
+    lines.push("");
+    lines.push("## Event geography");
+    lines.push(p.geography || "(not provided)");
+    lines.push("");
+    lines.push("## Available expert speakers");
+    lines.push(p.speakers || "(not provided)");
+    lines.push("");
+    lines.push("## Exclusions (rule these out)");
+    lines.push(p.exclusions || "(none provided)");
+    lines.push("");
+    lines.push("## What to find");
+    lines.push("1. Conferences and industry events in the geography above where the target audience attends and the company's expertise fits the program.");
+    lines.push("2. For each event: whether a call for papers / speakers is currently OPEN, UPCOMING (announced but not open), or CLOSED for the next edition.");
+    lines.push("3. The CFP submission deadline (exact date), event dates, and location.");
+    lines.push("4. Any vendor-speaker policies (for example: vendors only via sponsorship, or customer-led sessions allowed). Flag these; they often disqualify an event per the exclusions.");
+    lines.push("5. Submission requirements worth noting: abstract word limits, required speaker info, rules about AI-generated abstracts, co-presenter policies.");
+    lines.push("6. A short fit rationale per event: which speaker fits, and what talk angle would serve that audience.");
+    lines.push("");
+    lines.push("## Research rules");
+    lines.push("- Verify every deadline on the event organizer's own speaker or CFP page. Do not infer deadlines from third-party listings or prior years.");
+    lines.push("- If a deadline is not published, say \"not published\" rather than guessing.");
+    lines.push("- Include the direct URL to each CFP or speaker page.");
+    lines.push("- Separate results into two groups: (A) CFP open or deadline announced, sorted by deadline; (B) a watchlist of major events whose next CFP has not opened yet, with the expected window if known.");
+    lines.push("- Prefer events from the last and next 14 months; note the edition year explicitly.");
+    lines.push("");
+    lines.push("## Output format");
+    lines.push("First, a readable summary with your top 5 priority picks and the reasoning.");
+    lines.push("Then a CSV code block with EXACTLY this header, one row per opportunity, so it can be imported into a tracker:");
+    lines.push("");
+    lines.push("```csv");
+    lines.push("Event,Event Date & Location,CFP Deadline,Fit,Source URL,Status,Notes");
+    lines.push("```");
+    lines.push("");
+    lines.push("Column rules: CFP Deadline in YYYY-MM-DD format or blank if not published. Fit is High, Medium, or Low. Status is Watching for all new finds. Notes should hold the fit rationale, suggested speaker, and any submission requirements.");
+    return lines.join("\n");
+  }
+
+  $("btnGenerate").addEventListener("click", function () {
+    $("briefText").value = buildBrief();
+    $("briefOut").style.display = "block";
+    $("briefOut").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  });
+
+  $("btnCopyBrief").addEventListener("click", function () {
+    var txt = $("briefText");
+    txt.select();
+    try {
+      navigator.clipboard.writeText(txt.value).then(function () { toast("Brief copied to clipboard"); });
+    } catch (e) {
+      document.execCommand("copy");
+      toast("Brief copied to clipboard");
+    }
+  });
+
+  $("btnDownloadBrief").addEventListener("click", function () {
+    downloadFile("research-brief-" + todayISO() + ".md", $("briefText").value, "text/markdown");
+  });
+
+  // ---------- tracker: storage ----------
+  function saveRows() {
+    localStorage.setItem(LS_ROWS, JSON.stringify(rows));
+  }
+
+  function loadRows() {
+    try {
+      var r = JSON.parse(localStorage.getItem(LS_ROWS) || "[]");
+      if (Array.isArray(r)) rows = r;
+    } catch (e) { rows = []; }
+  }
+
+  // ---------- tracker: render ----------
+  function deadlineBadge(deadline, status) {
+    if (!deadline) return '<span class="badge none">not published</span>';
+    var done = (status === "Submitted" || status === "Accepted" || status === "Rejected" || status === "Closed");
+    var today = todayISO();
+    var label = deadline;
+    if (deadline < today && !done) return '<span class="badge overdue">' + escHtml(label) + ' (passed)</span>';
+    var days = Math.round((new Date(deadline) - new Date(today)) / 86400000);
+    if (!done && days >= 0 && days <= 14) return '<span class="badge soon">' + escHtml(label) + ' (' + days + 'd)</span>';
+    return '<span class="badge future">' + escHtml(label) + '</span>';
+  }
+
+  function renderTable() {
+    var sorted = rows.slice().sort(function (a, b) {
+      var ka = (a[sortKey] || "").toString().toLowerCase();
+      var kb = (b[sortKey] || "").toString().toLowerCase();
+      if (sortKey === "deadline") { // blanks last
+        if (!ka && kb) return 1;
+        if (ka && !kb) return -1;
+      }
+      if (ka < kb) return sortAsc ? -1 : 1;
+      if (ka > kb) return sortAsc ? 1 : -1;
+      return 0;
+    });
+
+    var body = $("trackerBody");
+    body.innerHTML = sorted.map(function (r) {
+      var src = r.source
+        ? '<a href="' + escHtml(r.source) + '" target="_blank" rel="noopener noreferrer">link</a>'
+        : '<span style="color:var(--muted)">none</span>';
+      return "<tr>" +
+        "<td>" + escHtml(r.event) + "</td>" +
+        "<td>" + escHtml(r.dateLocation) + "</td>" +
+        "<td>" + deadlineBadge(r.deadline, r.status) + "</td>" +
+        '<td class="fit-' + escHtml(r.fit) + '">' + escHtml(r.fit) + "</td>" +
+        "<td>" + src + "</td>" +
+        '<td><span class="status-pill status-' + escHtml(r.status) + '">' + escHtml(r.status) + "</span></td>" +
+        "<td>" + escHtml(r.notes) + "</td>" +
+        '<td class="row-actions">' +
+          '<button data-act="edit" data-id="' + r.id + '">Edit</button> ' +
+          '<button data-act="del" data-id="' + r.id + '" class="danger-link">Delete</button>' +
+        "</td>" +
+      "</tr>";
+    }).join("");
+
+    $("emptyState").style.display = rows.length ? "none" : "block";
+    $("trackerTable").style.display = rows.length ? "table" : "none";
+
+    // sort arrows
+    document.querySelectorAll("#trackerTable th[data-key]").forEach(function (th) {
+      var a = th.querySelector(".arrow");
+      if (a) a.textContent = th.dataset.key === sortKey ? (sortAsc ? "▲" : "▼") : "";
+    });
+  }
+
+  document.querySelectorAll("#trackerTable th[data-key]").forEach(function (th) {
+    th.addEventListener("click", function () {
+      var k = th.dataset.key;
+      if (k === sortKey) sortAsc = !sortAsc;
+      else { sortKey = k; sortAsc = true; }
+      renderTable();
+    });
+  });
+
+  $("trackerBody").addEventListener("click", function (e) {
+    var btn = e.target.closest("button[data-act]");
+    if (!btn) return;
+    var id = btn.dataset.id;
+    if (btn.dataset.act === "del") {
+      if (!confirm("Delete this row?")) return;
+      rows = rows.filter(function (r) { return r.id !== id; });
+      saveRows();
+      renderTable();
+    } else if (btn.dataset.act === "edit") {
+      var r = rows.find(function (x) { return x.id === id; });
+      if (!r) return;
+      editingId = id;
+      $("fEvent").value = r.event;
+      $("fDateLocation").value = r.dateLocation;
+      $("fDeadline").value = r.deadline;
+      $("fFit").value = r.fit;
+      $("fSource").value = r.source;
+      $("fStatus").value = r.status;
+      $("fNotes").value = r.notes;
+      $("addFormTitle").textContent = "Edit opportunity";
+      $("btnSaveRow").textContent = "Save changes";
+      $("btnCancelEdit").style.display = "inline-block";
+      $("addForm").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  });
+
+  function resetForm() {
+    editingId = null;
+    $("addForm").reset();
+    $("fFit").value = "Medium";
+    $("fStatus").value = "Watching";
+    $("addFormTitle").textContent = "Add opportunity";
+    $("btnSaveRow").textContent = "Add row";
+    $("btnCancelEdit").style.display = "none";
+  }
+
+  $("btnCancelEdit").addEventListener("click", resetForm);
+
+  $("addForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var data = {
+      event: $("fEvent").value.trim(),
+      dateLocation: $("fDateLocation").value.trim(),
+      deadline: $("fDeadline").value,
+      fit: $("fFit").value,
+      source: $("fSource").value.trim(),
+      status: $("fStatus").value,
+      notes: $("fNotes").value.trim()
+    };
+    if (!data.event) return;
+    if (editingId) {
+      var r = rows.find(function (x) { return x.id === editingId; });
+      if (r) Object.assign(r, data);
+      toast("Row updated");
+    } else {
+      data.id = uid();
+      rows.push(data);
+      toast("Row added");
+    }
+    saveRows();
+    renderTable();
+    resetForm();
+  });
+
+  $("btnClearTracker").addEventListener("click", function () {
+    if (!rows.length) return;
+    if (!confirm("Delete all " + rows.length + " tracker rows? Export a CSV first if you want a backup.")) return;
+    rows = [];
+    saveRows();
+    renderTable();
+  });
+
+  // ---------- CSV ----------
+  var CSV_HEADER = ["Event", "Event Date & Location", "CFP Deadline", "Fit", "Source URL", "Status", "Notes"];
+
+  function csvEscape(v) {
+    v = String(v == null ? "" : v);
+    if (/[",\n\r]/.test(v)) return '"' + v.replace(/"/g, '""') + '"';
+    return v;
+  }
+
+  $("btnExportCsv").addEventListener("click", function () {
+    if (!rows.length) { toast("Nothing to export yet"); return; }
+    var out = [CSV_HEADER.map(csvEscape).join(",")];
+    rows.forEach(function (r) {
+      out.push([r.event, r.dateLocation, r.deadline, r.fit, r.source, r.status, r.notes].map(csvEscape).join(","));
+    });
+    downloadFile("cfp-tracker-" + todayISO() + ".csv", out.join("\r\n"), "text/csv");
+  });
+
+  function parseCsv(text) {
+    var rowsOut = [], field = "", row = [], inQuotes = false, i = 0;
+    text = text.replace(/^﻿/, ""); // strip BOM
+    while (i < text.length) {
+      var c = text[i];
+      if (inQuotes) {
+        if (c === '"') {
+          if (text[i + 1] === '"') { field += '"'; i += 2; continue; }
+          inQuotes = false; i++; continue;
+        }
+        field += c; i++; continue;
+      }
+      if (c === '"') { inQuotes = true; i++; continue; }
+      if (c === ",") { row.push(field); field = ""; i++; continue; }
+      if (c === "\r") { i++; continue; }
+      if (c === "\n") { row.push(field); rowsOut.push(row); field = ""; row = []; i++; continue; }
+      field += c; i++;
+    }
+    if (field !== "" || row.length) { row.push(field); rowsOut.push(row); }
+    return rowsOut.filter(function (r) { return r.some(function (x) { return x.trim() !== ""; }); });
+  }
+
+  $("btnImportCsv").addEventListener("click", function () { $("csvFile").click(); });
+
+  $("csvFile").addEventListener("change", function () {
+    var file = this.files[0];
+    this.value = "";
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      var parsed = parseCsv(String(reader.result));
+      if (!parsed.length) { toast("Empty or unreadable CSV"); return; }
+      var header = parsed[0].map(function (h) { return h.trim().toLowerCase(); });
+      var idx = {};
+      var map = {
+        event: ["event", "conference", "event name"],
+        dateLocation: ["event date & location", "date & location", "event date and location", "date", "location"],
+        deadline: ["cfp deadline", "deadline", "submission deadline"],
+        fit: ["fit"],
+        source: ["source url", "source", "link", "url", "source link"],
+        status: ["status", "submission status"],
+        notes: ["notes", "note", "comments"]
+      };
+      Object.keys(map).forEach(function (key) {
+        idx[key] = -1;
+        map[key].some(function (alias) {
+          var j = header.indexOf(alias);
+          if (j !== -1) { idx[key] = j; return true; }
+          return false;
+        });
+      });
+      if (idx.event === -1) { toast('CSV needs an "Event" column'); return; }
+      var added = 0;
+      parsed.slice(1).forEach(function (r) {
+        function get(k) { return idx[k] !== -1 && r[idx[k]] != null ? r[idx[k]].trim() : ""; }
+        var ev = get("event");
+        if (!ev) return;
+        var fit = get("fit");
+        fit = ["High", "Medium", "Low"].indexOf(fit) !== -1 ? fit
+            : (fit.toLowerCase() === "high" ? "High" : fit.toLowerCase() === "low" ? "Low" : "Medium");
+        var status = get("status") || "Watching";
+        var known = ["Watching", "Drafting", "Submitted", "Accepted", "Rejected", "Closed"];
+        var si = known.map(function (s) { return s.toLowerCase(); }).indexOf(status.toLowerCase());
+        status = si !== -1 ? known[si] : "Watching";
+        var dl = get("deadline");
+        if (dl && !/^\d{4}-\d{2}-\d{2}$/.test(dl)) {
+          var d = new Date(dl);
+          dl = isNaN(d) ? "" : d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+        }
+        rows.push({
+          id: uid(),
+          event: ev,
+          dateLocation: get("dateLocation"),
+          deadline: dl,
+          fit: fit,
+          source: get("source"),
+          status: status,
+          notes: get("notes")
+        });
+        added++;
+      });
+      saveRows();
+      renderTable();
+      toast(added + " row" + (added === 1 ? "" : "s") + " imported");
+    };
+    reader.readAsText(file);
+  });
+
+  function downloadFile(name, content, mime) {
+    var blob = new Blob([content], { type: mime + ";charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+  }
+
+  // ---------- init ----------
+  loadProfile();
+  loadRows();
+  renderTable();
+})();
+</script>
+</body>
+</html>
