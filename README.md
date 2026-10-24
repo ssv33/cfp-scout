@@ -1,6 +1,6 @@
 # Earned Event Speaker Opportunity Scout
 
-A tiny, open-source tool for B2B tech companies that want to win **earned** (non-paid) conference speaking slots. It does two things:
+A handy open-source tool for B2B tech companies that want to win **earned** (non-paid) conference speaking slots. It does two things:
 
 1. **Generates a reusable research brief** from your company profile: expertise, target audience, geography, speaker bios, and exclusions. Paste the brief into any AI assistant with web search (ChatGPT, Claude, Perplexity) or hand it to a researcher. The brief asks for results in a CSV format you can import straight back into the tracker.
 2. **Tracks CFP opportunities** in a simple table: event, dates and location, CFP deadline (with overdue and due-soon highlighting), fit, source link, submission status, and notes.
