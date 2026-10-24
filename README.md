@@ -7,6 +7,8 @@ A tiny, open-source tool for B2B tech companies that want to win **earned** (non
 
 No account, no API key, no backend. Everything is a single HTML file. Your data is saved in your browser's localStorage and can be exported or imported as CSV at any time.
 
+**Live app:** https://ssv33.github.io/cfp-scout/
+
 ## Run it locally
 
 No build step. Pick one:
