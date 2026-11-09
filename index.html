@@ -432,19 +432,30 @@
     lines.push(p.exclusions || "(none provided)");
     lines.push("");
     lines.push("## What to find");
-    lines.push("1. Conferences and industry events in the geography above where the target audience attends and the company's expertise fits the program.");
-    lines.push("2. For each event: whether a call for papers / speakers is currently OPEN, UPCOMING (announced but not open), or CLOSED for the next edition.");
-    lines.push("3. The CFP submission deadline (exact date), event dates, and location.");
+    lines.push("Cover TWO tiers of events, and label each result with its tier:");
+    lines.push("- Tier 1 (core): the events where the company's domain is the headline topic. Include these, but do not stop here; they are the usual suspects every competitor also targets.");
+    lines.push("- Tier 2 (adjacent): events where the target audience shows up but the domain is NOT the headline topic, so a talk on it stands out and competition for slots is lower. Derive these from the audience definition, not the domain. For example: if the audience includes legal or compliance roles, look at legal and risk conferences; if it includes developers or testers, look at engineering, QA, and platform conferences with relevant tracks; if it includes a vertical (higher ed, healthcare, finance), look at that vertical's own conferences. Aim for at least a third of results to be Tier 2.");
+    lines.push("");
+    lines.push("For each event, find:");
+    lines.push("1. Whether a call for papers / speakers is currently OPEN, UPCOMING (announced but not open), or CLOSED for the next edition.");
+    lines.push("2. The CFP submission deadline (exact date), event dates, and location.");
+    lines.push("3. The official CFP or speaker page URL on the organizer's own site. If no official CFP page can be found, drop the event from the main list; third-party listings are not sufficient.");
     lines.push("4. Any vendor-speaker policies (for example: vendors only via sponsorship, or customer-led sessions allowed). Flag these; they often disqualify an event per the exclusions.");
     lines.push("5. Submission requirements worth noting: abstract word limits, required speaker info, rules about AI-generated abstracts, co-presenter policies.");
-    lines.push("6. A short fit rationale per event: which speaker fits, and what talk angle would serve that audience.");
+    lines.push("");
+    lines.push("## Per-event fit case (required, no generic praise)");
+    lines.push("For every event, write a 2-3 sentence case with all three parts:");
+    lines.push("- FIT: which specific element of the company's expertise maps to this event's program, and which segment of the target audience is actually in the room (name the persona; users vs. decision makers).");
+    lines.push("- WHY BOTHER: a reason to pursue it beyond name recognition; for example audience composition, realistic acceptance odds, a program gap the company could fill, timing relative to a market or regulatory driver, or lead quality. \"It's a big well-known event\" is not a reason.");
+    lines.push("- ANGLE: the talk angle and which listed speaker should give it.");
     lines.push("");
     lines.push("## Research rules");
-    lines.push("- Verify every deadline on the event organizer's own speaker or CFP page. Do not infer deadlines from third-party listings or prior years.");
-    lines.push("- If a deadline is not published, say \"not published\" rather than guessing.");
-    lines.push("- Include the direct URL to each CFP or speaker page.");
-    lines.push("- Separate results into two groups: (A) CFP open or deadline announced, sorted by deadline; (B) a watchlist of major events whose next CFP has not opened yet, with the expected window if known.");
+    lines.push("- Verify every deadline on the event organizer's own speaker or CFP page, and quote the deadline exactly as that page states it. Do not infer deadlines from third-party listings or prior years.");
+    lines.push("- If a deadline is not published, say \"not published\" rather than guessing. If a deadline came from anywhere other than the organizer's page, mark it UNVERIFIED.");
+    lines.push("- Every result must carry its official organizer CFP/speaker page URL; no event ships without one.");
+    lines.push("- Separate results into two groups: (A) CFP open or deadline announced, sorted by deadline; (B) a watchlist of major events whose next CFP has not opened yet, with the expected window based on last edition's dates (state that it is an estimate).");
     lines.push("- Prefer events from the last and next 14 months; note the edition year explicitly.");
+    lines.push("- Exclude the company's own events and events run by its direct competitors.");
     lines.push("");
     lines.push("## Output format");
     lines.push("First, a readable summary with your top 5 priority picks and the reasoning.");
@@ -454,7 +465,7 @@
     lines.push("Event,Event Date & Location,CFP Deadline,Fit,Source URL,Status,Notes");
     lines.push("```");
     lines.push("");
-    lines.push("Column rules: CFP Deadline in YYYY-MM-DD format or blank if not published. Fit is High, Medium, or Low. Status is Watching for all new finds. Notes should hold the fit rationale, suggested speaker, and any submission requirements.");
+    lines.push("Column rules: CFP Deadline in YYYY-MM-DD format or blank if not published. Fit is High, Medium, or Low. Status is Watching for all new finds. Source URL must be the organizer's own CFP/speaker page. Notes must start with the tier (Tier 1 or Tier 2), then compress the fit case: the FIT and WHY BOTHER reasoning, suggested speaker and angle, and any submission requirements.");
     return lines.join("\n");
   }
 
